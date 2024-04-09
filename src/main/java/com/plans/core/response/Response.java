@@ -1,35 +1,78 @@
 package com.plans.core.response;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import jakarta.servlet.http.Cookie;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.plans.core.exception.CustomException;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 public class Response {
+    
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static ResponseEntity<Object> create(String message, HttpStatus status, Object data) {
-        HashMap<String, Object> response = new HashMap<String, Object>();
+    private static HashMap<String, Object> createMap(String message, HttpStatus status) {
+        HashMap<String, Object> body = new HashMap<String, Object>();
         String timestamp = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss").format(new java.util.Date());
 
-        response.put("data", data);
-        response.put("timestamp", timestamp);
-        response.put("status", status.value());
-        response.put("msg", message);        
+        body.put("timestamp", timestamp);
+        body.put("status", status.value());
+        body.put("msg", message);        
 
-        return new ResponseEntity<Object>(response, status);
+        return body;
+    }
+
+    private static HashMap<String, Object> createMap(String message, HttpStatus status, Object data) {
+        HashMap<String, Object> body = createMap(message, status);
+        body.put("data", data);      
+
+        return body;
+    }
+    
+    public static ResponseEntity<Object> create(String message, HttpStatus status, Object data) {
+        return new ResponseEntity<Object>(createMap(message, status, data), status);
     }
 
     public static ResponseEntity<Object> create(String message, HttpStatus status) {
-        HashMap<String, Object> response = new HashMap<String, Object>();
-        String timestamp = new SimpleDateFormat("yyyy.MM.dd HH.mm.ss").format(new java.util.Date());
+        return new ResponseEntity<Object>(createMap(message, status), status);
+    }
 
-        response.put("timestamp", timestamp);
-        response.put("msg", message);
-        response.put("status", status.value());
+    private static String createString(CustomException ex) {
+        try {
+            return objectMapper.writeValueAsString(createMap(ex.getMessage(), ex.getStatus()));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "Something went wrong";
+        }
+    }
+    
+    private static String createString(String message, HttpStatus status) {
+        try {
+            return objectMapper.writeValueAsString(createMap(message, status));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "Something went wrong";
+        }
+    } 
 
-        return new ResponseEntity<Object>(response, status);
+    public static void createServletError(CustomException e, HttpServletResponse response) throws IOException {
+        response.setStatus(e.getStatus().value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(createString(e));
+        response.flushBuffer();
+    }
+    
+    public static void createServletError(String msg, HttpStatus status, HttpServletResponse response) throws IOException {
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(createString(msg, status));
+        response.flushBuffer();
     }
 }

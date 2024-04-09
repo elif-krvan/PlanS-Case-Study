@@ -65,13 +65,13 @@ public class AccountController {
     @GetMapping("test")
     public ResponseEntity<Object> testAuth(@RequestHeader(Header.USER_EMAIL) String email) {
         String test = "Welcome to the authenticated endpoint!";
-        return Response.create("ok", HttpStatus.OK, test);  
+        return Response.create("OK", HttpStatus.OK, test);  
     }
     
     @GetMapping("test1")
     public ResponseEntity<Object> testAuth1() {
         String test = "Welcome to the authenticated endpoint!";
-        return Response.create("ok", HttpStatus.OK, test);  
+        return Response.create("OK", HttpStatus.OK, test);  
     }
 
     // @GetMapping("/")

@@ -7,10 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.plans.core.exception.CustomException;
 import com.plans.core.exception.UnauthorizedException;
+import com.plans.core.response.Response;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plans.core.consts.Header;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -96,44 +101,31 @@ public class JWTFilter extends OncePerRequestFilter {
             UserDetails user = jwtUserService.loadUserByUsername(USERNAME);
 
             if ((isCurrentRefresh && jwtUtils.validateRefreshToken(token, user)) || jwtUtils.validateAccessToken(token, user)) {
-                System.out.println("here is here: " + user.getPassword());
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } 
 
             if (!isCurrentRefresh) {
-                // remove token from the header, so that microservices do not need to authorize users
                 // Remove the Authorization header
-                request.removeAttribute(HttpHeaders.AUTHORIZATION);
+                // request.setH(HttpHeaders.AUTHORIZATION);
             }
 
-            // Add custom headers
-            request.setAttribute(Header.USER_EMAIL, USERNAME); // TODO not working
-    
-            filterChain.doFilter(request, response);
+            CustomHttpServletRequestWrapper requestWrapper = new CustomHttpServletRequestWrapper(request);
+            requestWrapper.addHeader(Header.USER_EMAIL, username);
+
+            // Pass the wrapped request to the next filter or servlet in the chain
+            filterChain.doFilter(requestWrapper, response);
         } catch (UnauthorizedException e) {
-            // Handle JWT token verification failure
-            // Log the error or return an appropriate response
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // TODO create response object
-            response.getWriter().write(e.getMessage());
-            response.flushBuffer();
+            Response.createServletError(e, response);
             return;
-        } catch (JwtException e) {
-            // Handle JWT token verification failure
-            // Log the error or return an appropriate response
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized: JWT token cannot be verified");
-            response.flushBuffer();
+        } catch (JwtException | IllegalArgumentException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+
+            Response.createServletError("Login is unsuccessful", status, response);
             return;
-        } catch (IllegalArgumentException e) {
-            // Handle other exceptions
-            // Log the error or return an appropriate response
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Bad Request: Unable to get JWT Token");
-            response.flushBuffer();
-            return;
-        }        
+        }       
     }
-    
+
+   
 }
