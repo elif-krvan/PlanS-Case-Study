@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(CustomException e) {
-        // Log the exception if needed TODO test
+        // Log the exception if needed TODO test does not work??
         return Response.create(e.getMessage(), e.getStatus());
     }
 

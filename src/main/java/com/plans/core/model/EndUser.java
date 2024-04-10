@@ -21,12 +21,14 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Entity
 @Table(name = "end_user")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 // @IdClass(EndUserId.class)
@@ -46,6 +48,6 @@ public class EndUser {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
-    @OneToMany(mappedBy = "endUser") // TODO what does this do
-    private List<IoTDevice> devices;
+    // @OneToMany(mappedBy = "endUser") // TODO what does this do
+    // private List<IoTDevice> devices;
 }

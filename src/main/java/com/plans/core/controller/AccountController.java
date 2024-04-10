@@ -50,7 +50,7 @@ public class AccountController {
     // Only PlanS admins can register via this endpoint
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "register") 
     public ResponseEntity<Object> register(@Valid @RequestBody QUser userInfo) throws Exception {
-        RUser user = accountService.register(userInfo, Role.ADMIN);
+        RUser user = new RUser(accountService.register(userInfo, Role.ADMIN));
         return Response.create("Account is created", HttpStatus.OK, user);
     }
 

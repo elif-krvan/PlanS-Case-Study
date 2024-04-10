@@ -1,6 +1,7 @@
 package com.plans.core.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,11 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plans.core.request.QAddClient;
+import com.plans.core.request.QAddDevice;
+import com.plans.core.request.QUpdateDevice;
 import com.plans.core.request.QUpdateUser;
+import com.plans.core.response.RDevice;
 import com.plans.core.response.RRegisterClient;
 import com.plans.core.response.RUser;
 import com.plans.core.response.Response;
 import com.plans.core.service.ClientService;
+import com.plans.core.service.IoTDeviceService;
+import com.plans.core.model.IoTDevice;
 import com.plans.core.model.User;
 
 import jakarta.validation.Valid;
@@ -32,6 +38,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("admin")
 public class AdminController {
     private final ClientService clientService;
+    private final IoTDeviceService ioTDeviceService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "client")
     public ResponseEntity<Object> createClient(@Valid @RequestBody QAddClient newClient) throws Exception {
@@ -66,5 +73,47 @@ public class AdminController {
         RUser updatedClient = clientService.updateClient(client);
 
         return Response.create("Client data is updated", HttpStatus.OK, updatedClient);      
+    }    
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "device")
+    public ResponseEntity<Object> createDevice(@Valid @RequestBody QAddDevice newDevice) throws Exception {
+        RDevice createdDevice = ioTDeviceService.createDevice(newDevice);
+
+        return Response.create("New device is creaetd", HttpStatus.OK, createdDevice);      
+    }
+
+    @GetMapping(path = "device/{deviceId}")
+    public ResponseEntity<Object> getDeviceById(@PathVariable UUID deviceId) throws Exception {
+        RDevice device = ioTDeviceService.getDeviceById(deviceId);
+
+        return Response.create("OK", HttpStatus.OK, device);      
+    }
+    
+    @GetMapping(path = "client/{username}/device")
+    public ResponseEntity<Object> getClientDevices(@PathVariable String username) throws Exception {
+        List<RDevice> devices = ioTDeviceService.getDeviceByClient(username);
+
+        return Response.create("OK", HttpStatus.OK, devices);      
+    }
+    
+    @GetMapping(path = "device")
+    public ResponseEntity<Object> getAllDevices() throws Exception {
+        List<RDevice> devices = ioTDeviceService.getAllDevices();
+
+        return Response.create("OK", HttpStatus.OK, devices);      
+    }
+
+    @DeleteMapping(path = "device/{deviceId}")
+    public ResponseEntity<Object> removeDevice(@PathVariable UUID deviceId) throws Exception {
+        ioTDeviceService.removeDevice(deviceId);
+
+        return Response.create("Device is removed successfuly", HttpStatus.OK);      
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "device")
+    public ResponseEntity<Object> createClient(@Valid @RequestBody QUpdateDevice device) throws Exception {
+        RDevice updatedDevice = ioTDeviceService.updateDevice(device);
+
+        return Response.create("Client data is updated", HttpStatus.OK, updatedDevice);      
     }    
 }

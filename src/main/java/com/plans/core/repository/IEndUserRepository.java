@@ -12,6 +12,7 @@ import com.plans.core.model.EndUser;
 @Repository
 public interface IEndUserRepository extends JpaRepository<EndUser, UUID> {
     // List<EndUser> findAllById(UUID id);
-    // Optional<EndUser> findByUserId(UUID id);
+    Optional<EndUser> findByUserId(UUID id);
+    Optional<EndUser> findByUserUsername(String username);
     // Optional<EndUser> findByUserEmail(String email);
 }

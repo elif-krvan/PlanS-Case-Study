@@ -1,12 +1,15 @@
 package com.plans.core.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.plans.core.enums.Role;
 import com.plans.core.exception.AlreadyFoundException;
 import com.plans.core.exception.SomethingWentWrongException;
+import com.plans.core.model.EndUser;
 import com.plans.core.model.User;
+import com.plans.core.repository.IEndUserRepository;
 import com.plans.core.request.QAddClient;
 import com.plans.core.request.QUpdateUser;
 import com.plans.core.request.QUser;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientService {
 
     private final AccountService accountService;
+    private final IEndUserRepository endUserRepository;
 
     @Transactional
     public RRegisterClient createClient(QAddClient client) throws Exception {
@@ -36,7 +40,16 @@ public class ClientService {
                             .password(generatedPassword)
                             .build();
 
-            RUser registeredUser = accountService.register(newUser, Role.END_USER);
+            User registeredUser = accountService.register(newUser, Role.END_USER);
+            System.out.println("user email:" +registeredUser.getEmail());
+            System.out.println("user id:" +registeredUser.getId());
+
+            // Save user to enduser table
+            endUserRepository.save(
+                EndUser.builder()
+                .user(registeredUser)
+                // .devices(new ArrayList<>())
+                .build());
 
             log.info("Client registered with email {}.", registeredUser.getEmail());
 

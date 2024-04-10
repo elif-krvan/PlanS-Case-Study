@@ -103,7 +103,7 @@ public class AccountService {
     }
 
     @Transactional
-    public RUser register(QUser requestUser, Role role) throws Exception {
+    public User register(QUser requestUser, Role role) throws Exception {
         try {
             // If user with the same email or username exists, throw an exception
             boolean userExist = accountRepository.existsByEmail(requestUser.getEmail());
@@ -126,7 +126,7 @@ public class AccountService {
 
             log.info("User registered with email {}.", newUser.getId());
 
-            return new RUser(newUser);          
+            return newUser;          
         } catch (AlreadyFoundException e) {
             log.error("User register fail since email already exists for email {}", requestUser.getEmail());
             throw e;
