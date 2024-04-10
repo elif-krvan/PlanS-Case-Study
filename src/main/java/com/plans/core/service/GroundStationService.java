@@ -1,22 +1,20 @@
 package com.plans.core.service;
 
-import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
-import org.antlr.v4.runtime.RecognitionException;
-import org.springframework.stereotype.Component;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.stereotype.Service;
 
-import com.plans.core.model.DeviceRecord;
 import com.plans.core.model.IoTDevice;
 import com.plans.core.repository.IDeviceRepository;
 import com.plans.core.repository.IRecordRepository;
-import com.plans.core.response.RDevice;
+import com.plans.core.request.QAddRecord;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,10 +28,7 @@ public class GroundStationService {
 
     private final IDeviceRepository deviceRepository;
     private final IRecordRepository recordRepository;
-
-    // Send data to queue
-    public void simulateDownload() {
-    }
+    private final AmqpTemplate graundStationRecordTemplate;
 
     public void downloadData() {
         try {
@@ -41,8 +36,8 @@ public class GroundStationService {
             List<IoTDevice> devices = deviceRepository.findAll();
 
             for (IoTDevice device : devices) {
-                List<DeviceRecord> record = generateRandomRecords(device);
-                System.out.println(record);
+                generateRandomRecords(device.getId())
+                    .forEach(graundStationRecordTemplate::convertAndSend);
             }
             
         } catch (Exception e) {
@@ -50,8 +45,8 @@ public class GroundStationService {
         }
     }
 
-    public static List<DeviceRecord> generateRandomRecords(IoTDevice device) {
-        List<DeviceRecord> records = new ArrayList<>();
+    public static List<QAddRecord> generateRandomRecords(UUID deviceID) {
+        List<QAddRecord> records = new ArrayList<>();
 
         for (int i = 0; i < NUM_OF_DAYS; i++) {
             for (int j = 0; j < HOURS_IN_DAY; j++) {
@@ -62,7 +57,7 @@ public class GroundStationService {
                 LocalDateTime timestamp = LocalDateTime.of(START_DAY.plusDays(i), LocalTime.of(j, 0, 0));
 
                 // Create and add the DeviceRecord object to the list
-                records.add(new DeviceRecord(device, timestamp, temperature, humidity, pressure));
+                records.add(new QAddRecord(deviceID, timestamp, temperature, humidity, pressure));
             }            
         }
 

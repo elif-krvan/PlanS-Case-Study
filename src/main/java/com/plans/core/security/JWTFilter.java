@@ -7,11 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.plans.core.exception.CustomException;
 import com.plans.core.exception.UnauthorizedException;
 import com.plans.core.response.Response;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plans.core.consts.Header;
 
 import org.springframework.http.HttpHeaders;

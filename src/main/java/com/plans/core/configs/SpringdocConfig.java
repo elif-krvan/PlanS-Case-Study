@@ -1,3 +1,4 @@
+package com.plans.core.configs;
 // package com.plans.core.security;
 
 // import org.springframework.context.annotation.Bean;
