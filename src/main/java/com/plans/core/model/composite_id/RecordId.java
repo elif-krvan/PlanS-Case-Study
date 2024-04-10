@@ -1,18 +1,18 @@
 package com.plans.core.model.composite_id;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
-import javax.persistence.Embeddable;
+import com.plans.core.model.IoTDevice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientId implements Serializable {
-    private UUID userId; // Primary key of the User entity
+public class RecordId implements Serializable {
+    private IoTDevice device;
+    private LocalDateTime timestamp;
 }

@@ -13,10 +13,12 @@ import com.plans.core.exception.NotFoundException;
 import com.plans.core.exception.SomethingWentWrongException;
 import com.plans.core.model.EndUser;
 import com.plans.core.model.IoTDevice;
+import com.plans.core.model.Location;
 import com.plans.core.model.User;
 import com.plans.core.repository.IAccountRepository;
 import com.plans.core.repository.IDeviceRepository;
 import com.plans.core.repository.IEndUserRepository;
+import com.plans.core.repository.ILocationRepository;
 import com.plans.core.request.QAddClient;
 import com.plans.core.request.QAddDevice;
 import com.plans.core.request.QUpdateDevice;
@@ -38,6 +40,7 @@ public class IoTDeviceService {
 
     private final IEndUserRepository endUserRepository; // TODO is this necessary
     private final IDeviceRepository deviceRepository;
+    private final ILocationRepository locationRepository;
 
     @Transactional
     public RDevice createDevice(QAddDevice device) throws Exception {
@@ -46,9 +49,17 @@ public class IoTDeviceService {
             EndUser user = endUserRepository.findByUserUsername(device.getUsername())
                                          .orElseThrow(() -> new NotFoundException("User is not found!"));
 
+            // If location does not exist, save the new location
+            Location deviceLoc = locationRepository.findByLatAndLon(device.getLat(), device.getLon()).orElse(null);
+
+            if (deviceLoc == null) {
+                deviceLoc = locationRepository.save(new Location(device.getLat(), device.getLon(), device.getZone()));
+            }
+
             IoTDevice newDevice = deviceRepository.save(new IoTDevice(
                 UUID.randomUUID(),
-                device,
+                device.getName(),
+                deviceLoc,
                 user
             ));
 
@@ -123,18 +134,26 @@ public class IoTDeviceService {
             IoTDevice device = deviceRepository.findById(updateDevice.getId())
                                          .orElseThrow(() -> new NotFoundException("Device is not found!"));
             
-            // Set new fields to the user
+            Location deviceLocation = device.getLocation();
+
+            // Set new fields to the device and device location
             if (updateDevice.getName() != null) {
                 device.setName(updateDevice.getName());
             }
 
             if (updateDevice.getLat() != null) {
-                device.setLat(updateDevice.getLat());
+                deviceLocation.setLat(updateDevice.getLat());
             }
 
             if (updateDevice.getLon() != null) {
-                device.setLon(updateDevice.getLon());
+                deviceLocation.setLon(updateDevice.getLon());
             }
+            
+            if (updateDevice.getZone() != null) {
+                deviceLocation.setTimezone(updateDevice.getZone());
+            }
+
+            device.setLocation(deviceLocation);
             
             if (updateDevice.getUsername() != null) {
                 EndUser endUser = endUserRepository.findByUserUsername(updateDevice.getUsername())
@@ -142,8 +161,8 @@ public class IoTDeviceService {
                 device.setEndUser(endUser);
             }
 
-            // Update the user
-            deviceRepository.updateIotDevice(device.getName(), device.getLat(), device.getLon(), device.getEndUser(), device.getId());
+            // Update the device
+            deviceRepository.updateIotDevice(device.getName(), device.getLocation(), device.getEndUser(), device.getId());
 
             log.info("User with id {} is updated", updateDevice.getUsername());
 

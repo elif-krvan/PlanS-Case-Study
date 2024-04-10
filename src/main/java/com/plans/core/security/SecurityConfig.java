@@ -27,7 +27,8 @@ public class SecurityConfig {
     public static final String[] AUTH_WHITELIST = {
             "/auth/hello",
             "/auth/login",
-            "/auth/register"
+            "/auth/register",
+			"/station"
     };
 
 	@Bean

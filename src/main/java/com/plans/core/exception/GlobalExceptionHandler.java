@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ResponseEntity<Object> handleCustomException(CustomException ex) {
         return Response.create(ex.getMessage(), HttpStatus.BAD_REQUEST);
@@ -75,12 +75,6 @@ public class GlobalExceptionHandler {
         return Response.create("Bad Request", HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(CustomException e) {
-        // Log the exception if needed TODO test does not work??
-        return Response.create(e.getMessage(), e.getStatus());
-    }
-
     private String getFailedValidationMessage(FieldError fieldError) {
         // Extract the specific validation message that caused the failure
         String fieldName = fieldError.getField();
@@ -99,6 +93,12 @@ public class GlobalExceptionHandler {
         }
 
         return errorMsg.toString();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleException(Exception e) {
+        // Log the exception if needed TODO test does not work??
+        return Response.create(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 

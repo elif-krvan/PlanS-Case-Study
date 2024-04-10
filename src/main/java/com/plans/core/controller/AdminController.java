@@ -26,7 +26,6 @@ import com.plans.core.response.RUser;
 import com.plans.core.response.Response;
 import com.plans.core.service.ClientService;
 import com.plans.core.service.IoTDeviceService;
-import com.plans.core.model.IoTDevice;
 import com.plans.core.model.User;
 
 import jakarta.validation.Valid;
