@@ -25,7 +25,7 @@ public class User {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @NotBlank //TODO is it necessary for db stuff
+    @NotBlank
     @Column(name = "username", nullable = false)
     private String username;
 

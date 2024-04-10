@@ -43,7 +43,7 @@ public class AdminController {
     public ResponseEntity<Object> createClient(@Valid @RequestBody QAddClient newClient) throws Exception {
         RRegisterClient createdClient = clientService.createClient(newClient);
 
-        return Response.create("New client is creaetd", HttpStatus.OK, createdClient);      
+        return Response.create("New client is created", HttpStatus.OK, createdClient);      
     }
 
     @GetMapping(path = "client/{username}")

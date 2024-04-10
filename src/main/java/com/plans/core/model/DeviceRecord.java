@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.plans.core.model.composite_id.RecordId;
+import com.plans.core.model.compositeid.RecordId;
 import com.plans.core.request.QAddRecord;
 
 import jakarta.persistence.Column;
@@ -40,7 +40,7 @@ public class DeviceRecord {
     private LocalDateTime timestamp;
 
     @Column(name = "temperature", nullable = false)
-    @Min(value = -100, message = "Temperature must be at least -100") // TODO should we do this, this data comes from the sensors anyway
+    @Min(value = -100, message = "Temperature must be at least -100")
     @Max(value = 100, message = "Temperature must not exceed 100")
     private Double temperature;
 

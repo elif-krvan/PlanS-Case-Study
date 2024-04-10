@@ -1,7 +1,9 @@
 package com.plans.core.model;
 
 import java.time.ZoneId;
-import com.plans.core.model.composite_id.LocationId;
+
+import com.plans.core.model.compositeid.LocationId;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

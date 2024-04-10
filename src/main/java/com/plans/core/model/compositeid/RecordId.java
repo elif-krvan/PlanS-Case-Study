@@ -1,4 +1,4 @@
-package com.plans.core.model.composite_id;
+package com.plans.core.model.compositeid;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

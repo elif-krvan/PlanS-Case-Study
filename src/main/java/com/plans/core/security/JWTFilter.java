@@ -23,7 +23,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
@@ -51,7 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String tokenHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println("path: " + request.getServletPath());
+        log.info("Incoming request to {} ", request.getServletPath());
 
         String username = "";
         String token = "";
@@ -68,13 +70,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // If the token in the header is refresh token and it is expired, send error message
             if (isCurrentRefresh && jwtUtils.isRefreshTokenExpired(token)) {
-                System.out.println("Refresh token is expired");
                 throw new UnauthorizedException();
             }
 
             // If the token in the header is access token and it is expired, send error message
             if (!isCurrentRefresh && jwtUtils.isAccessTokenExpired(token)) {
-                System.out.println("Access token is expired");
                 throw new UnauthorizedException();
             }
 

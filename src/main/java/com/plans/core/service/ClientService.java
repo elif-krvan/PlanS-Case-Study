@@ -40,8 +40,6 @@ public class ClientService {
                             .build();
 
             User registeredUser = accountService.register(newUser, Role.END_USER);
-            System.out.println("user email:" +registeredUser.getEmail());
-            System.out.println("user id:" +registeredUser.getId());
 
             // Save user to enduser table
             endUserRepository.save(
@@ -70,13 +68,13 @@ public class ClientService {
         return accountService.getUserByUsername(username);
     }
 
-    @Transactional // TODO is this stupid? should i just call account service in the controller 
+    @Transactional
     public void removeClient(String username) throws Exception {
         accountService.removeUserByUsername(username);
     }
 
     @Transactional
-    public RUser updateClient(QUpdateUser updateUser) throws Exception { // TODO remove this and call directly from account service?
+    public RUser updateClient(QUpdateUser updateUser) throws Exception {
         return accountService.updateUser(updateUser);
     }
 }
