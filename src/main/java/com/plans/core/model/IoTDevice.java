@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
@@ -34,18 +35,13 @@ public class IoTDevice {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @NotNull
-    @Column(name = "lat", nullable = false, unique = false)
-    @Min(value = -90, message = "Latitude must be between -90 and +90")
-    @Max(value = 90, message = "Latitude must be between -90 and +90")
-    private Double lat;
-    
-    @NotNull
-    @Column(name = "long", nullable = false, unique = false)
-    @Min(value = -180, message = "Longitude  must be between -180 and +180")
-    @Max(value = 180, message = "Longitude  must be between -180 and +180")
-    private Double lon;
-
+    @ManyToOne
+    @JoinColumns({ // test this
+        @JoinColumn(name = "lat", referencedColumnName = "lat"),
+        @JoinColumn(name = "long", referencedColumnName = "long")
+    })
+    private Location location;
+   
     @ManyToOne(fetch = FetchType.LAZY) // TODO , cascade = CascadeType.PERSIST
     @JoinColumn(name = "end_user", referencedColumnName = "user_id", nullable = false)
     private EndUser endUser;
@@ -53,8 +49,7 @@ public class IoTDevice {
     public IoTDevice(UUID id, QAddDevice device, EndUser endUser) {
         this.id = id;
         this.name = device.getName();
-        this.lat = device.getLat();
-        this.lon = device.getLon();
+        this.location = new Location(device.getLat(), device.getLon(), device.getZone());
         this.endUser = endUser;
     }
 }
