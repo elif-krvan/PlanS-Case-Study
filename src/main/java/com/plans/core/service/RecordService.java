@@ -7,8 +7,6 @@ import com.plans.core.exception.SomethingWentWrongException;
 import com.plans.core.model.DeviceRecord;
 import com.plans.core.model.IoTDevice;
 import com.plans.core.repository.IDeviceRepository;
-import com.plans.core.repository.IEndUserRepository;
-import com.plans.core.repository.ILocationRepository;
 import com.plans.core.repository.IRecordRepository;
 import com.plans.core.request.QAddRecord;
 import jakarta.transaction.Transactional;
@@ -20,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class RecordService {
 
-    private final IEndUserRepository endUserRepository; // TODO is this necessary
     private final IDeviceRepository deviceRepository;
-    private final ILocationRepository locationRepository;
     private final IRecordRepository recordRepository;
 
     @Transactional
@@ -38,7 +34,7 @@ public class RecordService {
 
             log.info("A new record for device {} is created.", newRecord.getDevice().getId());
 
-            return newRecord; //TODO response class          
+            return newRecord;        
         } catch (NotFoundException e) {
             log.error("Device record cannot be created since device {} does not exist", record.getDeviceId());
             throw e;

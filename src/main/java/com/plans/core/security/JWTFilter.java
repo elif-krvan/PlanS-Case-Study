@@ -3,7 +3,6 @@ package com.plans.core.security;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,9 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class JWTFilter extends OncePerRequestFilter {
     private final static String tokenBearer = "Bearer";
 
-    @Autowired
-    private JWTUserService jwtUserService;
-
+    private final JWTUserService jwtUserService;
     private final JWTUtils jwtUtils;
 
     public static String getTokenWithoutBearer(String token) {

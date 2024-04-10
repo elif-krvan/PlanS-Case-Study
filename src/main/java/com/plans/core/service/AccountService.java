@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,13 +36,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AccountService {
     public static int hashStrength = 10;
 
-    @Autowired
-    final BCryptPasswordEncoder bCryptPasswordEncoder;
-
     private final IAccountRepository accountRepository;
-    private final JWTUserService jwtUserService;
 
-    @Autowired
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JWTUserService jwtUserService;
     private final JWTUtils jwtUtils;
 
 

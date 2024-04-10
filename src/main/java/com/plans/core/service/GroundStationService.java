@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.plans.core.model.IoTDevice;
 import com.plans.core.repository.IDeviceRepository;
-import com.plans.core.repository.IRecordRepository;
 import com.plans.core.request.QAddRecord;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ public class GroundStationService {
     private static final int NUM_OF_DAYS = 2;
 
     private final IDeviceRepository deviceRepository;
-    private final IRecordRepository recordRepository;
     private final AmqpTemplate graundStationRecordTemplate;
 
     public void downloadData() {

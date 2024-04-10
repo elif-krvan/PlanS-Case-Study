@@ -21,7 +21,7 @@ public class JWTUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            User appUser = accountRepository.findByEmail(username).orElseThrow(() -> new NotFoundException("User is not found!")); // TODO check with non existing email
+            User appUser = accountRepository.findByEmail(username).orElseThrow(() -> new NotFoundException("User is not found!"));
         
             UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 username,

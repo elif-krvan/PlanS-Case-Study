@@ -1,8 +1,6 @@
 package com.plans.core.response;
 
 import com.plans.core.model.IoTDevice;
-import com.plans.core.model.User;
-
 import lombok.Data;
 
 @Data

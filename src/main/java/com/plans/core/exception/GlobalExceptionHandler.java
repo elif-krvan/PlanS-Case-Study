@@ -82,22 +82,15 @@ public class GlobalExceptionHandler {
 
         StringBuilder errorMsg = new StringBuilder();
 
-        if (Character.isLowerCase(defaultMessage.charAt(0))) {
-            errorMsg.append(fieldName.charAt(0));
-            errorMsg.append(fieldName.substring(1));
-            errorMsg.append(" "); // TODO test
+            errorMsg.append(fieldName);
+            errorMsg.append(" ");
             errorMsg.append(defaultMessage);
-
-        } else {
-            errorMsg.append(defaultMessage);
-        }
 
         return errorMsg.toString();
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e) {
-        // Log the exception if needed TODO test does not work??
         return Response.create(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
