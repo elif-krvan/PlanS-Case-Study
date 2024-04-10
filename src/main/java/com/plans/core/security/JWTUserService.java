@@ -20,13 +20,13 @@ public class JWTUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            User appUser = accountRepository.findUserByEmail(username).orElse(null); // TODO orelse throws 
+            User appUser = accountRepository.findByEmail(username).orElse(null); // TODO orelse throws // TODO check with non existing email
         
             if (appUser != null) {
                 UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                     username,
                     appUser.getPassword(),
-                    Collections.singleton(new SimpleGrantedAuthority("USER")) //TODO update this
+                    Collections.singleton(new SimpleGrantedAuthority(appUser.getRole().toString())) //TODO check this
                 );
                 return userDetails;
             } else {
@@ -37,6 +37,7 @@ public class JWTUserService implements UserDetailsService {
         }
     }
     
+    @Deprecated
     public UserDetails loadUserByUsername(User appUser) throws UsernameNotFoundException {
         try {
             System.out.println("aaaaaaaaaaaa in user detail2");

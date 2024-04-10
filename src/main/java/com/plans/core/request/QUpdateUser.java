@@ -1,20 +1,20 @@
 package com.plans.core.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.UUID;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class QUserLogin {
+public class QUpdateUser {
     @NotNull
+    private UUID userId;
+
+    private String username;
+
     @Email(message = "Email field must be in a valid email format")
     private String email;
 
-    @NotBlank
     private String password;
 }

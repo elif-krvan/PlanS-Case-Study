@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.plans.core.request.QUser;
 import com.plans.core.request.QUserLogin;
 import com.plans.core.response.RLoginUser;
-import com.plans.core.response.RRegisterUser;
+import com.plans.core.response.RUser;
 import com.plans.core.response.Response;
 import com.plans.core.service.AccountService;
 import com.plans.core.consts.Header;
+import com.plans.core.enums.Role;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,7 +50,7 @@ public class AccountController {
     // Only PlanS admins can register via this endpoint
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, path = "register") 
     public ResponseEntity<Object> register(@Valid @RequestBody QUser userInfo) throws Exception {
-        RRegisterUser user = accountService.addUser(userInfo);
+        RUser user = accountService.register(userInfo, Role.ADMIN);
         return Response.create("Account is created", HttpStatus.OK, user);
     }
 
