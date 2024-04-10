@@ -1,9 +1,14 @@
 package com.plans.core.model;
 
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.plans.core.model.composite_id.RecordId;
 import com.plans.core.request.QAddRecord;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,6 +31,7 @@ import lombok.NoArgsConstructor;
 @IdClass(RecordId.class)
 public class DeviceRecord {
     @Id
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device", referencedColumnName = "id", insertable = false, updatable = false)
     private IoTDevice device;

@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.plans.core.exception.CustomException;
 import com.plans.core.exception.NotFoundException;
 import com.plans.core.exception.SomethingWentWrongException;
 import com.plans.core.model.EndUser;
@@ -102,15 +105,17 @@ public class IoTDeviceService {
     }
     
     @Transactional
-    public void removeDevice(UUID id) throws Exception {
+    public void removeDevice(UUID id) throws CustomException {
         try {
+            deviceRepository.findById(id).orElseThrow(() -> new NotFoundException("Device is not found!"));
+
             deviceRepository.deleteById(id);
 
             log.info("Device {} is removed", id);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (NotFoundException e) {
             log.error("Device {} couldn't be removed since it does not exist", id, e);
             throw new NotFoundException("Device is not found!");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             log.error("Device {} couldn't be removed", id, e);
             throw new SomethingWentWrongException();
         }

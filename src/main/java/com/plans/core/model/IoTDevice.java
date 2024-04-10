@@ -2,6 +2,9 @@ package com.plans.core.model;
 
 import java.util.UUID;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.plans.core.request.QAddDevice;
 
 import jakarta.persistence.Column;
@@ -27,10 +30,11 @@ public class IoTDevice {
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @NotBlank // TODO add size constraint
+    @NotBlank
     @Column(name = "name", nullable = false)
     private String name;
 
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @ManyToOne
     @JoinColumns({ // test this
         @JoinColumn(name = "lat", referencedColumnName = "lat"),
@@ -38,6 +42,7 @@ public class IoTDevice {
     })
     private Location location;
    
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY) // TODO , cascade = CascadeType.PERSIST
     @JoinColumn(name = "end_user", referencedColumnName = "user_id", nullable = false)
     private EndUser endUser;

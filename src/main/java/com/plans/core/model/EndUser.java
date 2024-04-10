@@ -2,6 +2,9 @@ package com.plans.core.model;
 
 import java.util.UUID;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Entity;
@@ -23,12 +26,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-// @IdClass(EndUserId.class)
 public class EndUser {
     @Id
     @NotNull
     private UUID userId; // maps to User.id by @MapsId
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(
