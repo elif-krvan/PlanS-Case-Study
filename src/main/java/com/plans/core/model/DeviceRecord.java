@@ -8,7 +8,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.plans.core.model.composite_id.RecordId;
 import com.plans.core.request.QAddRecord;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

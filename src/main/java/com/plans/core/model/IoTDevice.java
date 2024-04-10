@@ -5,8 +5,6 @@ import java.util.UUID;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.plans.core.request.QAddDevice;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,14 +41,7 @@ public class IoTDevice {
     private Location location;
    
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @ManyToOne(fetch = FetchType.LAZY) // TODO , cascade = CascadeType.PERSIST
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "end_user", referencedColumnName = "user_id", nullable = false)
     private EndUser endUser;
-
-    public IoTDevice(UUID id, QAddDevice device, EndUser endUser) {
-        this.id = id;
-        this.name = device.getName();
-        this.location = new Location(device.getLat(), device.getLon(), device.getZone());
-        this.endUser = endUser;
-    }
 }

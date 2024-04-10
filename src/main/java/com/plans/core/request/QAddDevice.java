@@ -1,7 +1,5 @@
 package com.plans.core.request;
 
-import java.time.ZoneId;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,9 +14,6 @@ public class QAddDevice {
 
     @NotNull
     private Double lon;
-
-    @NotNull
-    private ZoneId zone;
 
     @NotBlank
     private String username;
