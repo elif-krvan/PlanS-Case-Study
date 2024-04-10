@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.plans.core.exception.CustomException;
@@ -21,6 +18,8 @@ import com.plans.core.repository.ILocationRepository;
 import com.plans.core.request.QAddDevice;
 import com.plans.core.request.QUpdateDevice;
 import com.plans.core.response.RDevice;
+import com.plans.core.utils.ZoneSelector;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class IoTDeviceService {
             Location deviceLoc = locationRepository.findByLatAndLon(device.getLat(), device.getLon()).orElse(null);
 
             if (deviceLoc == null) {
-                deviceLoc = locationRepository.save(new Location(device.getLat(), device.getLon(), device.getZone()));
+                deviceLoc = locationRepository.save(new Location(device.getLat(), device.getLon(), ZoneSelector.getRandomZoneId()));
             }
 
             IoTDevice newDevice = deviceRepository.save(new IoTDevice(
@@ -127,34 +126,41 @@ public class IoTDeviceService {
             // If device with id does not exist, throw an exception
             IoTDevice device = deviceRepository.findById(updateDevice.getId())
                                          .orElseThrow(() -> new NotFoundException("Device is not found!"));
-            
-            Location deviceLocation = device.getLocation();
+
+            if (updateDevice.getUsername() != null) {
+                EndUser endUser = endUserRepository.findByUserUsername(updateDevice.getUsername())
+                                            .orElseThrow(() -> new NotFoundException("User is not found!"));
+                device.setEndUser(endUser);
+            }
 
             // Set new fields to the device and device location
             if (updateDevice.getName() != null) {
                 device.setName(updateDevice.getName());
             }
 
+            Location deviceLocation = device.getLocation();
+            Location newLocation = new Location();
+
             if (updateDevice.getLat() != null) {
-                deviceLocation.setLat(updateDevice.getLat());
+                // deviceLocation.setLat(updateDevice.getLat());
+                newLocation.setLat(updateDevice.getLat());
+            } else {
+                newLocation.setLat(deviceLocation.getLat());
             }
 
             if (updateDevice.getLon() != null) {
-                deviceLocation.setLon(updateDevice.getLon());
+                // deviceLocation.setLon(updateDevice.getLon());
+                newLocation.setLon(updateDevice.getLon());
+            } else {
+                newLocation.setLon(deviceLocation.getLon());
             }
-            
-            if (updateDevice.getZone() != null) {
-                deviceLocation.setTimezone(updateDevice.getZone());
-            }
-
-            device.setLocation(deviceLocation);
-            
-            if (updateDevice.getUsername() != null) {
-                EndUser endUser = endUserRepository.findByUserUsername(updateDevice.getUsername())
-                                         .orElseThrow(() -> new NotFoundException("User is not found!"));
-                device.setEndUser(endUser);
+            Location deviceLoc = locationRepository.findByLatAndLon(newLocation.getLat(), newLocation.getLon()).orElse(null);
+            if (deviceLoc == null) {
+                deviceLoc = locationRepository.save(new Location(newLocation.getLat(), newLocation.getLon(), ZoneSelector.getRandomZoneId()));
             }
 
+            device.setLocation(deviceLoc);
+            
             // Update the device
             deviceRepository.updateIotDevice(device.getName(), device.getLocation(), device.getEndUser(), device.getId());
 
@@ -168,5 +174,5 @@ public class IoTDeviceService {
             log.error("User update failed for device {}", updateDevice.getUsername(), e);
             throw new SomethingWentWrongException();
         }
-    }
+    }    
 }
