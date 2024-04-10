@@ -64,18 +64,6 @@ public class AccountController {
         String test = "Welcome to the authenticated endpoint!";
         return Response.create("OK", HttpStatus.OK, test);  
     }
-    
-    @GetMapping("test1")
-    public ResponseEntity<Object> testAuth1() {
-        String test = "Welcome to the authenticated endpoint!";
-        return Response.create("OK", HttpStatus.OK, test);  
-    }
-
-    // @GetMapping("/")
-    // public ResponseEntity<Object> getUsers() {
-    //     List<User> userList = accountService.getUsers();
-    //     return Response.create("Ok", HttpStatus.OK, userList);        
-    // }
 
     @GetMapping("hello")
     public ResponseEntity<Object> testUnsecuredEndpoint() {

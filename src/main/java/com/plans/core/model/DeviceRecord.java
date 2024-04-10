@@ -1,13 +1,9 @@
 package com.plans.core.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-
 import com.plans.core.model.composite_id.RecordId;
-import com.plans.core.request.QAddDevice;
 import com.plans.core.request.QAddRecord;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,8 +14,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

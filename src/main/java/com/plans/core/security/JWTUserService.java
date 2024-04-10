@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.plans.core.exception.NotFoundException;
 import com.plans.core.model.User;
 import com.plans.core.repository.IAccountRepository;
 
@@ -20,36 +21,17 @@ public class JWTUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            User appUser = accountRepository.findByEmail(username).orElse(null); // TODO orelse throws // TODO check with non existing email
+            User appUser = accountRepository.findByEmail(username).orElseThrow(() -> new NotFoundException("User is not found!")); // TODO check with non existing email
         
-            if (appUser != null) {
-                UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                    username,
-                    appUser.getPassword(),
-                    Collections.singleton(new SimpleGrantedAuthority(appUser.getRole().toString())) //TODO check this
-                );
-                return userDetails;
-            } else {
-                throw new UsernameNotFoundException("User not found with email: " + username);
-            }
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                username,
+                appUser.getPassword(),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + appUser.getRole().toString()))
+            );
+            return userDetails;
+
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while loading user details.", e);
-        }
-    }
-    
-    @Deprecated
-    public UserDetails loadUserByUsername(User appUser) throws UsernameNotFoundException {
-        try {
-            System.out.println("aaaaaaaaaaaa in user detail2");
-            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                                        appUser.getEmail(), 
-                                        appUser.getPassword()
-                                        // Collections.singleton(new SimpleGrantedAuthority(appUser.getUserType().toString()))
-                                        , null
-                                        );
-            return userDetails; 
-        } catch (Exception e) {
-            throw e;
         }
     }    
 }

@@ -7,28 +7,17 @@ import java.util.stream.Collectors;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.plans.core.enums.Role;
-import com.plans.core.exception.AlreadyFoundException;
 import com.plans.core.exception.NotFoundException;
 import com.plans.core.exception.SomethingWentWrongException;
 import com.plans.core.model.EndUser;
 import com.plans.core.model.IoTDevice;
 import com.plans.core.model.Location;
-import com.plans.core.model.User;
-import com.plans.core.repository.IAccountRepository;
 import com.plans.core.repository.IDeviceRepository;
 import com.plans.core.repository.IEndUserRepository;
 import com.plans.core.repository.ILocationRepository;
-import com.plans.core.request.QAddClient;
 import com.plans.core.request.QAddDevice;
 import com.plans.core.request.QUpdateDevice;
-import com.plans.core.request.QUpdateUser;
-import com.plans.core.request.QUser;
 import com.plans.core.response.RDevice;
-import com.plans.core.response.RRegisterClient;
-import com.plans.core.response.RUser;
-import com.plans.core.utils.PasswordGenerator;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class IoTDeviceService {
 
-    private final IEndUserRepository endUserRepository; // TODO is this necessary
+    private final IEndUserRepository endUserRepository;
     private final IDeviceRepository deviceRepository;
     private final ILocationRepository locationRepository;
 
@@ -65,7 +54,7 @@ public class IoTDeviceService {
 
             log.info("A new IoT device with id {} is registered for user {}.", newDevice.getId(), device.getUsername());
 
-            return new RDevice(newDevice); //TODO response class          
+            return new RDevice(newDevice);         
         } catch (NotFoundException e) {
             log.error("IoT device cannot be created since client with username does not exist {}", device.getUsername());
             throw e;

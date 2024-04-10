@@ -143,7 +143,7 @@ public class AccountService {
             return accountRepository.findAllByRole(role).stream().map(user -> new RUser(user)).collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Retrieving users with role {} is failed", role, e);
-            throw new SomethingWentWrongException(); // TODO add global error handling
+            throw new SomethingWentWrongException();
         }
     }
     

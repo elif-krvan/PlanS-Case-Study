@@ -1,37 +1,16 @@
 package com.plans.core.service;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.plans.core.enums.Role;
-import com.plans.core.exception.AlreadyFoundException;
 import com.plans.core.exception.NotFoundException;
 import com.plans.core.exception.SomethingWentWrongException;
 import com.plans.core.model.DeviceRecord;
-import com.plans.core.model.EndUser;
 import com.plans.core.model.IoTDevice;
-import com.plans.core.model.Location;
-import com.plans.core.model.User;
-import com.plans.core.repository.IAccountRepository;
 import com.plans.core.repository.IDeviceRepository;
 import com.plans.core.repository.IEndUserRepository;
 import com.plans.core.repository.ILocationRepository;
 import com.plans.core.repository.IRecordRepository;
-import com.plans.core.request.QAddClient;
-import com.plans.core.request.QAddDevice;
 import com.plans.core.request.QAddRecord;
-import com.plans.core.request.QUpdateDevice;
-import com.plans.core.request.QUpdateUser;
-import com.plans.core.request.QUser;
-import com.plans.core.response.RDevice;
-import com.plans.core.response.RRegisterClient;
-import com.plans.core.response.RUser;
-import com.plans.core.utils.PasswordGenerator;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
